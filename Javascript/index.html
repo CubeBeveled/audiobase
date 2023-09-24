@@ -1,20 +1,78 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  
-  <div class="music_player">
-    <div class="song_cover">
-      <img src="Stromae - Racine Carrée (BE 2013) Front.jpg" alt="Image Description" class="song_cover">
-    </div>
-  </div>
-
-  <div class="filetree">
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <title>Audiobase</title>
+  </head>
+  <body>
     
-  </div>
-  
-</body>
+    <div class="music_player">
+      <div class="song_cover">
+        <img src="./logo.svg" class="song_cover">
+      </div>
+
+      <audio id="audio-player" controls></audio>
+    </div>
+
+    <div class="filetree" id="drop-zone">
+      
+    </div>
+
+    <script>
+      let playlist = []
+      let playing = null
+      let playingIndex = -1
+      const dropZone = document.getElementById('drop-zone');
+      const audioPlayer = document.getElementById('audio-player');
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+      dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault(); // Prevent the default behavior, which is to open the file in the browser
+        dropZone.classList.add('drag-over'); // Add a CSS class for styling
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over'); // Remove the CSS class when the drag leaves the area
+      });
+
+      dropZone.addEventListener('drop', (event) => {
+        event.preventDefault(); // Prevent the default behavior
+        dropZone.classList.remove('drag-over'); // Remove the CSS class
+        const files = event.dataTransfer.files; // Access the dropped files
+
+        // Process the dropped files here (e.g., read their contents, display file names, etc.)
+        for (const file of files) {
+          console.log(`Dropped file: ${file.name} path: ${file.path}`);
+          if (file.path.endsWith('.mp3') || file.path.endsWith('.wav') || file.path.endsWith('.ogg')) {
+            playlist.push(file.path)
+          } else {
+            console.log(`Unsupported file format: ${file.name}`);
+          }
+        }
+      });
+
+      //Manage playlist
+      function loop() {
+        if(playlist.length > 0 && playing == null) {
+          playAudio(playlist[playingIndex + 1])
+          playing = playlist[playingIndex + 1]
+        }
+
+        delay(500)
+        loop()
+      }
+
+      function playAudio(filePath) {
+        // Get the audio element
+        const audioPlayer = document.getElementById('audio-player');
+
+        // Check if the provided file path is valid and supported (you can add more formats as needed)
+        // Set the audio element's source to the provided path
+        audioPlayer.src = filePath;
+        audioPlayer.play();
+        console.log(`Playing audio from: ${filePath}`);
+      }
+    </script>
+  </body>
 </html>

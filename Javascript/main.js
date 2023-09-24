@@ -7,6 +7,7 @@ function createWindow() {
     title: 'Player',
     width: 800,
     height: 600,
+    icon: './icon.ico', // Set the icon path her
     webPreferences: {
       nodeIntegration: true,
     },
